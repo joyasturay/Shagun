@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+enum Role{
+ ADMIN
+ COLLECTOR
+}
+model User{
+  id String @id @default(cuid())
+  email String @unique
+  password String 
+  phoneNumber String?
+  role Role @default(COLLECTOR)
+  Batches Batch[]
+  createdAt DateTime @default(now())
+}
+model Events{
+  id String @id @default(cuid())
+  name String
+  Subevents Subevents[]
+  createdAt DateTime @default(now())
+}
+model Subevents{
+  id String @id @default(cuid())
+  name String
+  Date DateTime @default(now())
+  eventId String
+  events Events @relation(references: [id],fields: [eventId])
+  Batches Batch[]
+  @@index([name,Date])
+}
+model Batch {
+  id        String   @id @default(cuid())
+  bagNumber Int     
+  capacity  Int      @default(30)
+  isSealed  Boolean  @default(false) 
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  eventId   String
+  event     Subevents @relation(fields: [eventId], references: [id])
+  Gifts     Gift[]    
+
+  @@unique([bagNumber, eventId]) 
+}
+
+model Gift{
+  id String @id @default(cuid())
+  batchId String
+  batch Batch @relation(references: [id],fields: [batchId])
+  imageUrl String
+  status GiftStatus @default(UNPROCESSED)
+  amount Int?
+  sender String?
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([batchId,status])
+}
+enum GiftStatus {
+  UNPROCESSED 
+  PROCESSED  
+  FLAGGED    
+}
+
