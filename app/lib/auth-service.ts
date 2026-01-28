@@ -1,13 +1,13 @@
 import prisma from "@/db/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-
+import { AuthUser } from "./auth-types";
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
 
-export const verifyCredentials = async (credentials: unknown) => {
+export const verifyCredentials = async (credentials: unknown): Promise<AuthUser | null> => {
   const parsedCredentials = loginSchema.safeParse(credentials);
   if (!parsedCredentials.success) {
     return null;
@@ -17,7 +17,7 @@ export const verifyCredentials = async (credentials: unknown) => {
     where: { email: email },
   });
   if (!user || !user.password) {
-    throw new Error("User not found");
+    return null;
   }
   const isPasswordValid = await bcrypt.compare(password, user.password);
 

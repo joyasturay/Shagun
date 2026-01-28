@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -12,44 +6,36 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-enum Role{
- ADMIN
- COLLECTOR
-}
+
 model User {
   id            String    @id @default(cuid())
-  name          String?
   email         String    @unique
-  password      String?   
+  password      String?
   role          Role      @default(COLLECTOR)
-  
+  createdAt     DateTime  @default(now())
   emailVerified DateTime?
   image         String?
+  name          String?
   accounts      Account[]
-  sessions      Session[]
-  
-  
   Batches       Batch[]
-  
-  createdAt     DateTime  @default(now())
+  sessions      Session[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
 }
 
@@ -60,51 +46,61 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-model Events{
-  id String @id @default(cuid())
-  name String
+
+model Events {
+  id        String      @id @default(cuid())
+  name      String
+  createdAt DateTime    @default(now())
   Subevents Subevents[]
-  createdAt DateTime @default(now())
 }
-model Subevents{
-  id String @id @default(cuid())
-  name String
-  Date DateTime @default(now())
+
+model Subevents {
+  id      String   @id @default(cuid())
+  name    String
+  Date    DateTime @default(now())
   eventId String
-  events Events @relation(references: [id],fields: [eventId])
   Batches Batch[]
-  @@index([name,Date])
+  events  Events   @relation(fields: [eventId], references: [id])
+
+  @@index([name, Date])
 }
+
 model Batch {
-  id        String   @id @default(cuid())
-  bagNumber Int     
-  capacity  Int      @default(30)
-  isSealed  Boolean  @default(false) 
+  id        String    @id @default(cuid())
+  bagNumber Int
+  capacity  Int       @default(30)
+  isSealed  Boolean   @default(false)
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
   eventId   String
   event     Subevents @relation(fields: [eventId], references: [id])
-  Gifts     Gift[]    
+  user      User      @relation(fields: [userId], references: [id])
+  Gifts     Gift[]
 
-  @@unique([bagNumber, eventId]) 
+  @@unique([bagNumber, eventId])
 }
 
-model Gift{
-  id String @id @default(cuid())
-  batchId String
-  batch Batch @relation(references: [id],fields: [batchId])
-  imageUrl String
-  status GiftStatus @default(UNPROCESSED)
-  amount Int?
-  sender String?
-  note String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@index([batchId,status])
+model Gift {
+  id        String     @id @default(cuid())
+  batchId   String
+  imageUrl  String
+  status    GiftStatus @default(UNPROCESSED)
+  amount    Int?
+  sender    String?
+  note      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  batch     Batch      @relation(fields: [batchId], references: [id])
+
+  @@index([batchId, status])
 }
+
+enum Role {
+  ADMIN
+  COLLECTOR
+}
+
 enum GiftStatus {
-  UNPROCESSED 
-  PROCESSED  
-  FLAGGED    
+  UNPROCESSED
+  PROCESSED
+  FLAGGED
 }
-

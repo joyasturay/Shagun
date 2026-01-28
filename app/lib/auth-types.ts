@@ -1,0 +1,7 @@
+// app/lib/auth-types.ts
+export type AuthUser = {
+  id: string;
+  email: string;
+  name?: string | null;
+  role: string;
+};
