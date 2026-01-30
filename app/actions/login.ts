@@ -3,7 +3,7 @@
 import { signIn } from "@/app/lib/auth";
 import { AuthError } from "next-auth";
 type LoginState =
-  | { success: true }
+  | { success: boolean }
   | { error: string }
 
 export async function loginAction(

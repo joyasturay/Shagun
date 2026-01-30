@@ -19,6 +19,7 @@ model User {
   accounts      Account[]
   Batches       Batch[]
   sessions      Session[]
+  events Events[]
 }
 
 model Account {
@@ -52,6 +53,8 @@ model Events {
   name      String
   createdAt DateTime    @default(now())
   Subevents Subevents[]
+  userId String
+  user User @relation(references: [id],fields: [userId],onDelete: Cascade)
 }
 
 model Subevents {
@@ -60,7 +63,7 @@ model Subevents {
   Date    DateTime @default(now())
   eventId String
   Batches Batch[]
-  events  Events   @relation(fields: [eventId], references: [id])
+  events  Events   @relation(fields: [eventId], references: [id],onDelete: Cascade)
 
   @@index([name, Date])
 }
