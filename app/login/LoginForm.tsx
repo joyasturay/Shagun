@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { loginAction } from "../actions/login";
 type LoginState =
-  | { success: true }
+  | { success: boolean}
   | { error: string }
 
 const initialState:LoginState = {success:true,error:""}; 
@@ -20,7 +20,7 @@ export default function LoginForm() {
 
     if ("success" in state) {
       toast.success("Logged in successfully");
-      router.push("/");
+     
     }
   }, [state, router]);
 

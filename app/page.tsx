@@ -1,11 +1,8 @@
-import AnimatedButton from "@/components/ui/animated-button"
-
+import LogoutButton from "@/components/ui/LogputButton";
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-   <AnimatedButton>
-    Get Started
-  </AnimatedButton>
+      <LogoutButton />
     </div>
   );
 }

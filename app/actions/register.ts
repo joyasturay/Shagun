@@ -2,7 +2,6 @@
 
 import prisma from "@/db/lib/prisma";
 import bcrypt from "bcryptjs";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 type RegisterState = { error: string };
 const userSchema = z.object({
