@@ -26,7 +26,7 @@ export async function addTeamMembers(formData: FormData) {
     return { error: "You do not have permission to modify this event." };
   }
   const userToInvite = await prisma.user.findUnique({
-    where: { id: session?.user?.id },
+    where: { email:checkData.data.email},
   });
   if (!userToInvite) {
     return { error: "User not found. Ask them to sign up first!" };

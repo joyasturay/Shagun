@@ -1,6 +1,7 @@
 import prisma from "@/db/lib/prisma";
 import { auth } from "app/lib/auth";
 import { notFound, redirect } from "next/navigation";
+import InviteMemberForm from "@/components/ui/InviteMemberForm";
 type Props = {
   params: Promise<{ id: string }>;
 };
@@ -64,7 +65,8 @@ export default async function getEvent({ params }: Props) {
             ))}
           </div>
         )}
-      </div>
+          </div>
+          <InviteMemberForm eventId={event.id} />
     </div>
   );
 }
