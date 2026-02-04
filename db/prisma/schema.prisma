@@ -19,7 +19,8 @@ model User {
   accounts      Account[]
   Batches       Batch[]
   sessions      Session[]
-  events Events[]
+  events Events[] @relation("EventCreator")
+  memberEvents Events[] @relation("EventTeam")
 }
 
 model Account {
@@ -54,7 +55,8 @@ model Events {
   createdAt DateTime    @default(now())
   Subevents Subevents[]
   userId String
-  user User @relation(references: [id],fields: [userId],onDelete: Cascade)
+  user User @relation("EventCreator",references: [id],fields: [userId],onDelete: Cascade)
+  collectors User[] @relation("EventTeam")
 }
 
 model Subevents {

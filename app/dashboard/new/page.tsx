@@ -5,14 +5,16 @@ import { useActionState } from "react";
 import { createEvent } from "@/app/actions/event-creation";
 import { toast } from "sonner";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 type ActionState = {
     error?: string;
+    success?:string
 };
 
 const initialState: ActionState = {};
 
 export default function CreateEventPage() {
+    const router = useRouter();
   const [subEvents, setSubEvents] = useState([{ name: "", date: "" }]);
 
   const [state, action] = useActionState(createEvent, initialState);
@@ -20,7 +22,15 @@ export default function CreateEventPage() {
     if (state?.error) {
       toast.error(state.error);
     }
-  }, [state]);
+
+    if (state?.success) {
+      toast.success("Event created successfully 🎉");
+
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
+    }
+  }, [state, router]);
 
   const handleChange = (
     index: number,

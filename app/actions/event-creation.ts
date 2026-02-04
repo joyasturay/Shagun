@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 type ActionState = {
   error?: string;
-  success?: boolean;
+  success?: string;
 };
 
 export async function createEvent(
@@ -58,7 +58,7 @@ export async function createEvent(
     });
 
     revalidatePath("/dashboard");
-    return { success: true };
+    return { success: "true"};
   } catch (err) {
     console.error("CREATE EVENT FAILED:", err);
     return { error: "EVENT_CREATION_FAILED" };
