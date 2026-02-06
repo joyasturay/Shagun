@@ -6,6 +6,7 @@ import { createEvent } from "@/app/actions/event-creation";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Submitbutton } from "@/components/ui/SubmitButton";
 type ActionState = {
     error?: string;
     success?:string
@@ -133,12 +134,7 @@ export default function CreateEventPage() {
         <hr />
 
         <div className="flex gap-4">
-          <button
-            type="submit"
-            className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
-          >
-            Create Event
-          </button>
+         <Submitbutton/>
 
           <Link
             href="/dashboard"
