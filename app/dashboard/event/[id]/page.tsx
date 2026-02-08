@@ -2,6 +2,7 @@ import prisma from "@/db/lib/prisma";
 import { auth } from "app/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import InviteMemberForm from "@/components/ui/InviteMemberForm";
+import BatchList from "@/components/ui/BatchList";
 type Props = {
   params: Promise<{ id: string }>;
 };
@@ -21,6 +22,17 @@ export default async function getEvent({ params }: Props) {
           role: true,
         },
       },
+      Subevents: {
+        orderBy: { Date: "asc" },
+        include: {
+          Batches: {
+            orderBy: { bagNumber: "desc" },
+            include: {
+              _count: { select: { Gifts: true } },
+            },
+          },
+        },
+      },
     },
   });
   if (!event) {
@@ -38,8 +50,6 @@ export default async function getEvent({ params }: Props) {
           Active
         </span>
       </div>
-
-      {/* Team Section */}
       <div className="bg-white border rounded-lg p-6 shadow-sm">
         <h2 className="text-xl font-semibold mb-4">My Team</h2>
 
@@ -65,8 +75,9 @@ export default async function getEvent({ params }: Props) {
             ))}
           </div>
         )}
-          </div>
-          <InviteMemberForm eventId={event.id} />
+        <BatchList subEvents={event.Subevents} />
+      </div>
+      <InviteMemberForm eventId={event.id} />
     </div>
   );
 }

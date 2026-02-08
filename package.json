@@ -6,9 +6,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "dev":"next"
+    "dev": "next"
   },
   "dependencies": {
+    "@auth/core": "^0.34.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
@@ -21,9 +22,9 @@
     "gsap": "^3.14.2",
     "lucide-react": "^0.563.0",
     "next": "16.1.4",
-   "next-auth": "^5.0.0-beta.30",
-  "@auth/core": "^0.34.0",
+    "next-auth": "^5.0.0-beta.30",
     "pg": "^8.17.2",
+    "qrcode.react": "^4.2.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sonner": "^2.0.7",
