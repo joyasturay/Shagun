@@ -96,7 +96,7 @@ export default function BatchList({
                     number: batch.bagNumber,
                     eventName: sub.name,
                   })
-                } // <--- CLICK TO OPEN
+                } 
                 className={`p-4 border rounded-lg text-center cursor-pointer transition relative group ${
                   batch.isSealed
                     ? "bg-gray-100 opacity-60"
@@ -112,14 +112,11 @@ export default function BatchList({
                 <div className="mt-2 text-sm font-medium text-gray-600">
                   {batch._count.Gifts} items
                 </div>
-
-                {/* Visual Cue */}
                 <span className="absolute top-2 right-2 text-xs opacity-0 group-hover:opacity-100 transition">
                   🔍
                 </span>
               </div>
             ))}
-            {/* Empty State */}
             {sub.Batches.length === 0 && (
               <div className="col-span-full py-8 text-center bg-gray-50 rounded border border-dashed border-gray-200">
                 <p className="text-gray-400 italic text-sm">
