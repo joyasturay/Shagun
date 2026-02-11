@@ -3,6 +3,7 @@ import { auth } from "app/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import InviteMemberForm from "@/components/ui/InviteMemberForm";
 import BatchList from "@/components/ui/BatchList";
+import LiveMonitor from "@/components/ui/LiveMonitor";
 type Props = {
   params: Promise<{ id: string }>;
 };
@@ -39,6 +40,7 @@ export default async function getEvent({ params }: Props) {
     return notFound();
   }
   if (event.userId != session?.user?.id) redirect("/dashboard");
+  const isAdmin = event.userId;
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-8">
@@ -78,6 +80,12 @@ export default async function getEvent({ params }: Props) {
         <BatchList subEvents={event.Subevents} />
       </div>
       <InviteMemberForm eventId={event.id} />
+      {isAdmin && (
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-4">Command Center</h2>
+          <LiveMonitor eventId={event.id} />
+        </div>
+      )}
     </div>
   );
 }
