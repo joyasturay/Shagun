@@ -11,10 +11,13 @@
   "dependencies": {
     "@auth/core": "^0.34.0",
     "@auth/prisma-adapter": "^2.11.1",
+    "@aws-sdk/client-s3": "^3.991.0",
+    "@aws-sdk/s3-request-presigner": "^3.992.0",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "@supabase/supabase-js": "^2.91.1",
     "bcryptjs": "^3.0.3",
+    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",

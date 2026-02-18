@@ -1,7 +1,7 @@
 import { auth } from "app/lib/auth";
 import prisma from "@/db/lib/prisma";
 import { redirect } from "next/navigation";
-import { GiftForm } from "@/components/ui/GiftForm"; // We'll create this next
+import GiftForm from "@/components/ui/GiftForm"; // We'll create this next
 
 type Props = {
   params: Promise<{ batchId: string }>;

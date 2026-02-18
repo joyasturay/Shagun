@@ -5,6 +5,7 @@ import { auth } from "../lib/auth";
 import { revalidatePath } from "next/cache";
 import { APP_CONFIG } from "../lib/config";
 import { eventSchema } from "../lib/validation";
+import { redirect } from "next/navigation";
 type ActionState = {
   error?: string;
   success?: string;
