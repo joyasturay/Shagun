@@ -1,6 +1,5 @@
 import { getPreSignedURL } from "../actions/upload";
 import imageCompression from "browser-image-compression";
-import { getReadSignedUrl } from "./getSignedUrl";
 export async function uploadImageToS3(file: File): Promise<string | null> {
   try {
     const compressedFile = await imageCompression(file, {
@@ -22,7 +21,7 @@ export async function uploadImageToS3(file: File): Promise<string | null> {
     });
 
     if (!upload.ok) throw new Error("S3 Upload failed");
-    const publicUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.amazonaws.com/${fileKey}`;
+    const publicUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileKey}`;
 
     return publicUrl;
   } catch (err) {

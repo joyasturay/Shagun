@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import InviteMemberForm from "@/components/ui/InviteMemberForm";
 import BatchList from "@/components/ui/BatchList";
 import LiveMonitor from "@/components/ui/LiveMonitor";
+import Link from "next/link";
+import LogoutButton from "@/components/ui/LogoutButton";
 type Props = {
   params: Promise<{ id: string }>;
 };
@@ -48,6 +50,20 @@ export default async function getEvent({ params }: Props) {
           <h1 className="text-3xl font-bold">{event.name}</h1>
           <p className="text-gray-500">Event ID: {event.id}</p>
         </div>
+
+        <div className="flex items-center gap-4">
+          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+            Active
+          </span>
+          {/* Drop it right next to your active badge */}
+          <LogoutButton />
+        </div>
+      </div>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">{event.name}</h1>
+          <p className="text-gray-500">Event ID: {event.id}</p>
+        </div>
         <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
           Active
         </span>
@@ -81,8 +97,17 @@ export default async function getEvent({ params }: Props) {
       </div>
       <InviteMemberForm eventId={event.id} />
       {isAdmin && (
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">Command Center</h2>
+        <div className="mb-12 space-y-6 ">
+          <div className="flex justify-between items-center mb-4 mt-3">
+            <h2 className="text-2xl font-bold">Command Center</h2>
+            <Link
+              href={`/dashboard/event/${event.id}/reconcile`}
+              className="bg-black text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md hover:bg-gray-800 transition"
+            >
+              🔐 Open Audit & Recon Page
+            </Link>
+          </div>
+
           <LiveMonitor eventId={event.id} />
         </div>
       )}

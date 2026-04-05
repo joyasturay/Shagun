@@ -25,4 +25,5 @@ export const giftSchema = z.object({
   sender: z.string().optional(),
   note: z.string().max(100, "Note is too long").optional(),
   batchId: z.string().cuid("Invalid Batch ID"),
+ imageUrl: z.string().optional().or(z.literal("")),
 });

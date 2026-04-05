@@ -17,7 +17,7 @@ export default function CollectorCam({ currentBatchId }: { currentBatchId: strin
       // 1. Upload Image (Supabase)
       const url = await envelopeService.uploadEnvelope(file)
       
-      // 2. Save Record (Neon)
+     
       await stashGift(currentBatchId, url)
       
       alert("Stashed successfully!")

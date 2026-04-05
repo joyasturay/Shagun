@@ -17,7 +17,7 @@ export async function getPreSignedURL(fileType: string, fileSize: number) {
     const fileKey = `gifts/${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileType.split("/")[1]}`;
     try {
         const command = new PutObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME!,
+            Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
             Key: fileKey,
             ContentType: fileType,
             ContentLength: fileSize,

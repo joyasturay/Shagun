@@ -17,13 +17,15 @@ export async function createGift(formData: FormData) {
     note: formData.get("note")?.toString() || undefined,
 
     batchId: formData.get("batchId")?.toString() || "",
+
+    imageUrl: formData.get("imageUrl")?.toString() || "",
   };
 
   const validation = giftSchema.safeParse(rawData);
   if (!validation.success) {
     return { error: validation.error.issues[0].message };
   }
-  const { amount, sender, note, batchId } = validation.data;
+  const { amount, sender, note, batchId,imageUrl } = validation.data;
   const batch = await prisma.batch.findUnique({
     where: { id: batchId },
     include: {
@@ -48,11 +50,12 @@ export async function createGift(formData: FormData) {
     await prisma.gift.create({
       data: {
         batchId,
-        imageUrl: "",
+        imageUrl:validation.data.imageUrl || "",
         status: "UNPROCESSED",
         amount,
         sender,
         note,
+        
       },
     });
     revalidatePath(`/collect/${batchId}`);

@@ -1,7 +1,7 @@
 'use client'
 
 import { QRCodeSVG } from 'qrcode.react'
-
+import Link from 'next/link'
 export default function BatchQR({ 
   batchId, 
   bagNumber, 
@@ -40,6 +40,14 @@ export default function BatchQR({
       >
         🖨️ Print Label
       </button>
+      <div className="w-full mt-6 pt-6 border-t border-gray-100 print:hidden">
+        <Link 
+          href={`/collect/${batchId}`}
+          className="flex items-center justify-center w-full bg-black text-white py-3 rounded-lg text-sm font-bold shadow-md hover:bg-gray-800 hover:scale-[1.02] transition-all"
+        >
+          Open Form on this Device ↗
+        </Link>
+      </div>
     </div>
   )
 }

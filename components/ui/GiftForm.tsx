@@ -33,7 +33,7 @@ export default function GiftForm({ batchId }: { batchId: string }) {
 
     let imageUrl = ""
 
-    // A. If there is a file, upload it first
+
     if (file) {
       const url = await uploadImageToS3(file)
       if (!url) {
@@ -45,10 +45,10 @@ export default function GiftForm({ batchId }: { batchId: string }) {
       imageUrl = url
     }
 
-    // B. Now save the Gift Data + Image URL
+   
     setStatus("SAVING")
     
-    // Append the S3 URL to the form data so the Server Action can see it
+    
     formData.set("imageUrl", imageUrl) 
 
     const result = await createGift(formData)

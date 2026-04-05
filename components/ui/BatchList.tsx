@@ -43,7 +43,6 @@ export default function BatchList({
 
   return (
     <div className="space-y-8 mt-8">
-      {/* 1. THE MODAL (Overlay) */}
       {selectedBatch && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm print:bg-white print:absolute print:inset-0">
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full relative overflow-hidden print:shadow-none print:w-full">
@@ -115,6 +114,7 @@ export default function BatchList({
                 <span className="absolute top-2 right-2 text-xs opacity-0 group-hover:opacity-100 transition">
                   🔍
                 </span>
+               
               </div>
             ))}
             {sub.Batches.length === 0 && (
