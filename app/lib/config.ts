@@ -1,0 +1,6 @@
+export const APP_CONFIG = {
+    ENABLE_TEAMS: true, 
+  ENABLE_EMAIL_NOTIFICATIONS: false,
+  MAX_EVENTS_PER_USER: 1, 
+  RATE_LIMIT_INTERVAL_MS: 5000,
+}as const
