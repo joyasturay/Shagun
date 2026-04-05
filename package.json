@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "eslint",
     "dev": "next",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate --schema=./db/prisma/schema.prisma"
   },
   "dependencies": {
     "@auth/core": "^0.34.0",
