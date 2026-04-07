@@ -51,6 +51,9 @@ export const metadata: Metadata = {
     title: "Shagun.ai | The Modern Wedding Ledger",
     description: "Digitize your wedding Shagun securely and instantly.",
   },
+  verification: {
+  google: "mCJWIvcGz-YPgpWwk2HRjQgMpfyw2c-1cl8Dpi5odLg",
+},
 };
 
 export default function RootLayout({
