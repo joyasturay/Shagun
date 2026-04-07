@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     siteName: "Shagun.ai",
     images: [
       {
-        url: "https://shagun-e1ex.vercel.app/og-image.png",
+        url: "https://shagun-e1ex.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Shagun.ai Dashboard Preview",
