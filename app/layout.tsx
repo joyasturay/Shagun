@@ -15,8 +15,42 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Your App",
-  description: "Your app description",
+  title: {
+    default: "Shagun.ai | The Modern Wedding Ledger",
+    template: "%s | Shagun.ai",
+  },
+  description:
+    "Ditch the diary. Digitize the Shagun. Securely collect, auto-scan, and reconcile wedding envelopes in real-time.",
+  keywords: [
+    "Indian wedding",
+    "Shagun tracker",
+    "wedding registry",
+    "digital ledger",
+    "cash gift tracker",
+    "event management",
+  ],
+  openGraph: {
+    title: "Shagun.ai | The Modern Wedding Ledger",
+    description:
+      "The chaos of WhatsApp photos and 2 AM Excel sheets is over. Digitize your wedding Shagun.",
+    url: "https://shagun-e1ex.vercel.app",
+    siteName: "Shagun.ai",
+    images: [
+      {
+        url: "https://shagun-e1ex.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Shagun.ai Dashboard Preview",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shagun.ai | The Modern Wedding Ledger",
+    description: "Digitize your wedding Shagun securely and instantly.",
+  },
 };
 
 export default function RootLayout({
