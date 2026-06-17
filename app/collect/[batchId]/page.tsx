@@ -1,7 +1,7 @@
 import { auth } from "app/lib/auth";
 import prisma from "@/db/lib/prisma";
 import { redirect } from "next/navigation";
-import GiftForm from "@/components/ui/GiftForm"; // We'll create this next
+import GiftForm from "@/components/ui/GiftForm";
 
 type Props = {
   params: Promise<{ batchId: string }>;
@@ -13,10 +13,11 @@ export default async function CollectorPage({ params }: Props) {
   if (!session?.user) {
     redirect(`/login?callbackUrl=/collect/${batchId}`);
   }
+
   const batch = await prisma.batch.findUnique({
     where: { id: batchId },
     include: {
-      event: { select: { name: true } }, 
+      event: { select: { name: true } },
       _count: { select: { Gifts: true } },
     },
   });
