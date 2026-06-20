@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import InviteMemberForm from "@/components/ui/InviteMemberForm";
 import BatchList from "@/components/ui/BatchList";
+import CollectorBagList from "@/components/ui/CollectorBagList";
 import LiveMonitor from "@/components/ui/LiveMonitor";
 import LogoutButton from "@/components/ui/LogoutButton";
 import ConversationalAudit from "@/components/ui/ConversationalAudit";
@@ -20,6 +21,7 @@ export default async function getEvent({ params }: Props) {
   const event = await prisma.events.findUnique({
     where: { id },
     include: {
+      collectors: { select: { id: true } },
       Subevents: {
         orderBy: { Date: "asc" },
         include: {
@@ -33,7 +35,47 @@ export default async function getEvent({ params }: Props) {
   });
 
   if (!event) return notFound();
-  if (event.userId !== session.user.id) redirect("/dashboard");
+
+  const isAdmin = event.userId === session.user.id;
+  const isCollector = event.collectors.some((c) => c.id === session.user.id);
+  if (!isAdmin && !isCollector) redirect("/dashboard");
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-slate-50 pb-12">
+        <div className="bg-white border-b border-slate-200">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                {event.name}
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">You&apos;re collecting for this event</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1 rounded-full text-xs font-semibold">
+                Collector
+              </span>
+              <LogoutButton />
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+          <section>
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+                Bags
+              </h2>
+              <p className="text-sm text-slate-500 mt-0.5">
+                Tap a bag to start scanning envelopes into it.
+              </p>
+            </div>
+            <CollectorBagList subEvents={event.Subevents} />
+          </section>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-12">
