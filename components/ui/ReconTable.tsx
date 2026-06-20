@@ -26,50 +26,64 @@ export default function ReconTable({ gifts, eventId }: { gifts: Gift[], eventId:
     })
   }
 
-  // Totals recompute live as the admin flags/verifies envelopes
+  // Totals recompute live as the admin flags/verifies envelopes.
+  // Gross = Verified + Pending + Flagged
   const totals = useMemo(() => {
     let gross = 0
+    let verified = 0
+    let pending = 0
     let flagged = 0
     for (const g of optimisticGifts) {
       const amt = g.amount ?? 0
       gross += amt
       if (g.status === 'FLAGGED') flagged += amt
+      else if (g.status === 'PROCESSED') verified += amt
+      else pending += amt
     }
-    return { gross, flagged, net: gross - flagged }
+    return { gross, verified, pending, flagged }
   }, [optimisticGifts])
 
-  // Per-collector breakdown (flagged amounts excluded from each collector's verified total)
+  // Per-collector breakdown
   const collectors = useMemo(() => {
-    const map = new Map<string, { name: string; count: number; net: number; flagged: number }>()
+    const map = new Map<string, { name: string; count: number; verified: number; pending: number; flagged: number }>()
     for (const g of optimisticGifts) {
       const name = g.collectedBy || "Unknown"
-      const entry = map.get(name) ?? { name, count: 0, net: 0, flagged: 0 }
+      const entry = map.get(name) ?? { name, count: 0, verified: 0, pending: 0, flagged: 0 }
       const amt = g.amount ?? 0
       entry.count += 1
       if (g.status === 'FLAGGED') entry.flagged += amt
-      else entry.net += amt
+      else if (g.status === 'PROCESSED') entry.verified += amt
+      else entry.pending += amt
       map.set(name, entry)
     }
-    return [...map.values()].sort((a, b) => b.net - a.net)
+    return [...map.values()].sort((a, b) => (b.verified + b.pending) - (a.verified + a.pending))
   }, [optimisticGifts])
 
   const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
   return (
     <div className="space-y-6">
-      {/* Summary stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Summary stat cards — Gross = Verified + Pending + Flagged */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Gross Collected</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">{inr(totals.gross)}</p>
-        </div>
-        <div className="bg-white border border-red-100 rounded-xl p-5 shadow-sm">
-          <p className="text-xs font-semibold text-red-400 uppercase tracking-wider">Flagged (Deducted)</p>
-          <p className="text-2xl font-bold text-red-600 mt-1">− {inr(totals.flagged)}</p>
+          <p className="text-[11px] text-gray-400 mt-1">Everything scanned</p>
         </div>
         <div className="bg-emerald-600 rounded-xl p-5 shadow-sm">
-          <p className="text-xs font-semibold text-emerald-100 uppercase tracking-wider">Net Verified Total</p>
-          <p className="text-2xl font-bold text-white mt-1">{inr(totals.net)}</p>
+          <p className="text-xs font-semibold text-emerald-100 uppercase tracking-wider">✅ Verified</p>
+          <p className="text-2xl font-bold text-white mt-1">{inr(totals.verified)}</p>
+          <p className="text-[11px] text-emerald-100 mt-1">Cash confirmed</p>
+        </div>
+        <div className="bg-white border border-amber-200 rounded-xl p-5 shadow-sm">
+          <p className="text-xs font-semibold text-amber-500 uppercase tracking-wider">⏳ Pending</p>
+          <p className="text-2xl font-bold text-amber-600 mt-1">{inr(totals.pending)}</p>
+          <p className="text-[11px] text-amber-500 mt-1">Not yet checked</p>
+        </div>
+        <div className="bg-white border border-red-200 rounded-xl p-5 shadow-sm">
+          <p className="text-xs font-semibold text-red-400 uppercase tracking-wider">🚩 Flagged</p>
+          <p className="text-2xl font-bold text-red-600 mt-1">{inr(totals.flagged)}</p>
+          <p className="text-[11px] text-red-400 mt-1">Discrepancy</p>
         </div>
       </div>
 
@@ -84,8 +98,9 @@ export default function ReconTable({ gifts, eventId }: { gifts: Gift[], eventId:
             <tr>
               <th className="px-6 py-2.5">Collector</th>
               <th className="px-6 py-2.5 text-right">Envelopes</th>
-              <th className="px-6 py-2.5 text-right">Flagged</th>
-              <th className="px-6 py-2.5 text-right">Net Collected</th>
+              <th className="px-6 py-2.5 text-right">✅ Verified</th>
+              <th className="px-6 py-2.5 text-right">⏳ Pending</th>
+              <th className="px-6 py-2.5 text-right">🚩 Flagged</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -98,8 +113,9 @@ export default function ReconTable({ gifts, eventId }: { gifts: Gift[], eventId:
                   {c.name}
                 </td>
                 <td className="px-6 py-3 text-right text-gray-600">{c.count}</td>
-                <td className="px-6 py-3 text-right text-red-500">{c.flagged > 0 ? `− ${inr(c.flagged)}` : "—"}</td>
-                <td className="px-6 py-3 text-right font-bold text-gray-900">{inr(c.net)}</td>
+                <td className="px-6 py-3 text-right font-bold text-emerald-600">{inr(c.verified)}</td>
+                <td className="px-6 py-3 text-right text-amber-600">{c.pending > 0 ? inr(c.pending) : "—"}</td>
+                <td className="px-6 py-3 text-right text-red-500">{c.flagged > 0 ? inr(c.flagged) : "—"}</td>
               </tr>
             ))}
           </tbody>
