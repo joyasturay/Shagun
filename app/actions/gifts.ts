@@ -55,7 +55,7 @@ export async function createGift(formData: FormData) {
         amount,
         sender,
         note,
-        
+        collectedById: session.user.id,
       },
     });
     revalidatePath(`/collect/${batchId}`);

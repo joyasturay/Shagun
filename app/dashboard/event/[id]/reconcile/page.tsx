@@ -25,19 +25,36 @@ export default async function ReconcilePage({ params }: Props) {
   if (event.userId !== session.user.id) {
     redirect(`/dashboard/event/${id}`)
   }
-  const gifts = await prisma.gift.findMany({
+  const rawGifts = await prisma.gift.findMany({
     where: { batch: { event: { eventId: id } } },
     include: {
+      collectedBy: { select: { name: true, email: true } },
       batch: {
         select: {
           bagNumber: true,
-          event: { select: { name: true } }, 
-          user: { select: { name: true } }   
+          event: { select: { name: true } },
+          user: { select: { name: true, email: true } }
         }
       }
     },
     orderBy: { createdAt: 'desc' }
   })
+
+  const gifts = rawGifts.map((g) => ({
+    id: g.id,
+    amount: g.amount,
+    sender: g.sender,
+    status: g.status,
+    imageUrl: g.imageUrl,
+    bagNumber: g.batch.bagNumber,
+    // Per-envelope collector; fall back to the bag owner for gifts saved before this field existed
+    collectedBy:
+      g.collectedBy?.name ||
+      g.collectedBy?.email ||
+      g.batch.user?.name ||
+      g.batch.user?.email ||
+      "Unknown",
+  }))
 
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-8">
@@ -62,15 +79,13 @@ export default async function ReconcilePage({ params }: Props) {
       </div>
 
       {/* RECONCILIATION TABLE */}
-      <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
-        {gifts.length > 0 ? (
-          <ReconTable gifts={gifts} eventId={id} />
-        ) : (
-          <div className="p-16 text-center text-gray-400 italic bg-gray-50">
-            No envelopes collected yet.
-          </div>
-        )}
-      </div>
+      {gifts.length > 0 ? (
+        <ReconTable gifts={gifts} eventId={id} />
+      ) : (
+        <div className="p-16 text-center text-gray-400 italic bg-gray-50 border rounded-xl">
+          No envelopes collected yet.
+        </div>
+      )}
 
     </div>
   )
