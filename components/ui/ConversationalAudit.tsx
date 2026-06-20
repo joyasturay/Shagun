@@ -66,7 +66,7 @@ export default function ConversationalAudit({ eventId }: { eventId: string }) {
         if (result.resolvedFindingIndices?.length) {
           setResolvedIds((prev) => new Set([...prev, ...result.resolvedFindingIndices!]));
         }
-        if (result.action === "DELETE_GIFTS" && result.deletedGiftIds?.length) {
+        if (result.action === "DELETE" && result.deletedGiftIds?.length) {
           setDeletedGiftIds((prev) => new Set([...prev, ...result.deletedGiftIds!]));
         }
         // Clear active finding if it got resolved
