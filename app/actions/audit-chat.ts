@@ -166,8 +166,12 @@ Return ONLY valid JSON (no markdown):
       const allRenamedIds: string[] = [];
       const resolved: number[] = [];
 
-      // SPECIFIC numbering: each finding gets its own name
-      if (decision.scope === "SPECIFIC" && decision.renames?.length) {
+      // Did the user EXPLICITLY ask to widen beyond the selected one?
+      const wantsAll = /\b(all|sab|saare|saari|every|everyone|sabhi)\b/i.test(userMessage);
+
+      // SPECIFIC numbering (e.g. "name them gupta 1, 2, 3"): each finding its own name.
+      // Only honoured when the user actually wants multiple — never when a single box is selected.
+      if (decision.renames?.length && decision.renames.length > 1) {
         await Promise.all(
           decision.renames.map(async ({ findingIndex, newName }) => {
             if (!validIdx(findingIndex) || !newName?.trim()) return;
@@ -179,15 +183,23 @@ Return ONLY valid JSON (no markdown):
             }
           })
         );
-      } else if (decision.newName?.trim()) {
-        // SELECTED / ALL_SAME_NAME: one name applied to the resolved finding(s)
-        const indices = resolveIndices(decision.scope, decision.targetIndices);
-        const ids = indices.flatMap((i) => giftIdsForFinding(i));
-        const safeIds = await verifyGiftIds(ids);
-        if (safeIds.length > 0) {
-          await prisma.gift.updateMany({ where: { id: { in: safeIds } }, data: { sender: decision.newName.trim() } });
-          allRenamedIds.push(...safeIds);
-          resolved.push(...indices);
+      } else {
+        const newName = decision.newName?.trim() || decision.renames?.[0]?.newName?.trim();
+        if (newName) {
+          // DETERMINISTIC GUARD: if a box is selected and the user did NOT say "all",
+          // rename ONLY that selected finding — never anyone else, whatever the AI guessed.
+          const indices =
+            selectedIdx >= 0 && !wantsAll
+              ? [selectedIdx]
+              : resolveIndices(decision.scope, decision.targetIndices);
+
+          const ids = indices.flatMap((i) => giftIdsForFinding(i));
+          const safeIds = await verifyGiftIds(ids);
+          if (safeIds.length > 0) {
+            await prisma.gift.updateMany({ where: { id: { in: safeIds } }, data: { sender: newName } });
+            allRenamedIds.push(...safeIds);
+            resolved.push(...indices);
+          }
         }
       }
 
