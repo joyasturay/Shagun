@@ -1,17 +1,38 @@
 import prisma from "@/db/lib/prisma";
 import { auth } from "app/lib/auth";
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
-import InviteMemberForm from "@/components/ui/InviteMemberForm";
-import BatchList from "@/components/ui/BatchList";
 import CollectorBagList from "@/components/ui/CollectorBagList";
-import LiveMonitor from "@/components/ui/LiveMonitor";
-import LogoutButton from "@/components/ui/LogoutButton";
-import ConversationalAudit from "@/components/ui/ConversationalAudit";
+import { DashboardShell } from "@/components/ui/dashboard-shell";
+import { EventDashboardAdmin } from "@/components/ui/event-dashboard";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+function computeStats(
+  subEvents: {
+    Batches: { isSealed: boolean; _count: { Gifts: number } }[];
+  }[]
+) {
+  let bags = 0;
+  let envelopes = 0;
+  let activeBags = 0;
+
+  for (const sub of subEvents) {
+    for (const batch of sub.Batches) {
+      bags += 1;
+      envelopes += batch._count.Gifts;
+      if (!batch.isSealed) activeBags += 1;
+    }
+  }
+
+  return {
+    ceremonies: subEvents.length,
+    bags,
+    envelopes,
+    activeBags,
+  };
+}
 
 export default async function getEvent({ params }: Props) {
   const session = await auth();
@@ -42,116 +63,46 @@ export default async function getEvent({ params }: Props) {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-slate-50 pb-12">
-        <div className="bg-white border-b border-slate-200">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                {event.name}
-              </h1>
-              <p className="text-sm text-slate-500 mt-1">You&apos;re collecting for this event</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1 rounded-full text-xs font-semibold">
-                Collector
-              </span>
-              <LogoutButton />
-            </div>
+      <DashboardShell
+        title={event.name}
+        subtitle="You're collecting for this event"
+        badge={
+          <span className="badge-lime text-[10px] sm:text-xs">Collector</span>
+        }
+      >
+        <section>
+          <div className="mb-5 sm:mb-6">
+            <h2 className="text-xl font-light tracking-tight text-forest-depths sm:text-2xl">
+              Your bags
+            </h2>
+            <p className="mt-1 text-sm text-pewter">
+              Tap a bag to start scanning envelopes into it.
+            </p>
           </div>
-        </div>
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-          <section>
-            <div className="mb-4">
-              <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-                Bags
-              </h2>
-              <p className="text-sm text-slate-500 mt-0.5">
-                Tap a bag to start scanning envelopes into it.
-              </p>
-            </div>
-            <CollectorBagList subEvents={event.Subevents} />
-          </section>
-        </div>
-      </div>
+          <CollectorBagList subEvents={event.Subevents} />
+        </section>
+      </DashboardShell>
     );
   }
 
+  const stats = computeStats(event.Subevents);
+
   return (
-    <div className="min-h-screen bg-slate-50 pb-12">
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              {event.name}
-            </h1>
-            <p className="text-sm text-slate-500 mt-1">Event ID: {event.id}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-full text-xs font-semibold">
-              Active
-            </span>
-            <LogoutButton />
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <InviteMemberForm eventId={event.id} />
-        </div>
-
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-                Bag Management
-              </h2>
-              <p className="text-sm text-slate-500 mt-0.5">
-                Open new collection bags and share QR codes with your team.
-              </p>
-            </div>
-          </div>
-          <BatchList subEvents={event.Subevents} />
-        </section>
-
-        <section>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              Command Center
-            </h2>
-            <Link
-              href={`/dashboard/event/${event.id}/reconcile`}
-              className="inline-flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-200 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm group"
-            >
-              <svg
-                className="w-4 h-4 text-amber-700 group-hover:scale-110 transition-transform"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Open Audit & Recon Page
-            </Link>
-          </div>
-
-          <LiveMonitor eventId={event.id} />
-        </section>
-
-        <section>
-          <div className="mb-4">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">AI Audit Engine</h2>
-            <p className="text-sm text-slate-500 mt-0.5">
-              Scan all bags for duplicates and resolve issues conversationally.
-            </p>
-          </div>
-          <ConversationalAudit eventId={event.id} />
-        </section>
-      </div>
-    </div>
+    <DashboardShell
+      title={event.name}
+      subtitle={`Event ID · ${event.id.slice(0, 8)}…`}
+      badge={
+        <span className="badge-lime text-[10px] sm:text-xs">
+          <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-forest-depths" />
+          Active
+        </span>
+      }
+    >
+      <EventDashboardAdmin
+        eventId={event.id}
+        subEvents={event.Subevents}
+        stats={stats}
+      />
+    </DashboardShell>
   );
 }

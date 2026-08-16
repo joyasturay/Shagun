@@ -2,6 +2,7 @@ import { auth } from "app/lib/auth";
 import prisma from "@/db/lib/prisma";
 import { redirect } from "next/navigation";
 import GiftForm from "@/components/ui/GiftForm";
+import Link from "next/link";
 
 type Props = {
   params: Promise<{ batchId: string }>;
@@ -22,31 +23,54 @@ export default async function CollectorPage({ params }: Props) {
     },
   });
 
-  if (!batch) return <div className="p-8 text-center">Invalid QR Code</div>;
-  if (batch.isSealed)
+  if (!batch) {
     return (
-      <div className="p-8 text-center text-red-600">This bag is sealed.</div>
+      <div className="flex min-h-screen items-center justify-center bg-snow-white p-8 text-center">
+        <div>
+          <span className="code-pill mb-4">ERR-404</span>
+          <p className="text-[length:var(--text-body-sm)] text-pewter">Invalid QR code</p>
+        </div>
+      </div>
     );
+  }
+
+  if (batch.isSealed) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-snow-white p-8 text-center">
+        <div>
+          <span className="badge-outline mb-4">Sealed</span>
+          <p className="text-[length:var(--text-body-sm)] text-pewter">This bag is sealed.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <div className="bg-black text-white p-4 sticky top-0 z-10 shadow-md">
-        <div className="flex justify-between items-center">
+    <div className="flex min-h-screen flex-col bg-forest-depths">
+      <header className="sticky top-0 z-10 border-b border-snow-white/10 bg-forest-depths px-6 py-4">
+        <div className="mx-auto flex max-w-lg items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold">Bag #{batch.bagNumber}</h1>
-            <p className="text-xs text-gray-400 uppercase">
+            <Link href="/dashboard" className="mb-1 block text-[length:var(--text-label)] text-snow-white/50 hover:text-snow-white">
+              ← Dashboard
+            </Link>
+            <span className="code-pill border-snow-white text-snow-white">
+              Bag #{batch.bagNumber}
+            </span>
+            <p className="mt-2 text-[length:var(--text-label)] uppercase tracking-wide text-snow-white/60">
               {batch.event.name}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold">{batch._count.Gifts}</div>
-            <div className="text-[10px] text-gray-400 uppercase">
-              Items Inside
+            <div className="font-seed-sans-mono text-[length:var(--text-subheading)] font-medium text-snow-white">
+              {batch._count.Gifts}
+            </div>
+            <div className="text-[length:var(--text-micro)] uppercase tracking-wide text-snow-white/50">
+              Items inside
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex-1 p-4">
+      </header>
+      <div className="flex-1 px-6 py-8">
         <GiftForm batchId={batchId} />
       </div>
     </div>

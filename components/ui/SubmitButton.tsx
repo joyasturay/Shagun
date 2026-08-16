@@ -6,8 +6,8 @@ export const Submitbutton = () => {
     return (
         <button type="submit"
             disabled={pending}
-            className={`px-6 py-2 rounded text-white transition-all ${pending ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:bg-gray-800"}`}>
-            {pending?"Creating event...":"Create Event"}
+            className="btn-primary disabled:cursor-not-allowed disabled:opacity-50">
+            {pending ? "Creating event..." : "Create Event"}
        </button>
     )
 }

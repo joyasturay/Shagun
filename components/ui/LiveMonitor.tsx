@@ -1,18 +1,34 @@
 "use client";
 
 import { getLiveAnalytics, type AnalyticsData } from "@/app/actions/analytics";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { AnimatedNumber, fadeUp } from "./motion";
 
 export default function LiveMonitor({ eventId }: { eventId: string }) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pulse, setPulse] = useState(false);
+  const prevGiftCount = useRef(0);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await getLiveAnalytics(eventId);
-      if ("error" in result) setError(result.error);
-      else setData(result);
+      if ("error" in result) {
+        setError(result.error);
+      } else {
+        if (
+          prevGiftCount.current > 0 &&
+          result.totalGifts > prevGiftCount.current
+        ) {
+          setPulse(true);
+          setTimeout(() => setPulse(false), 600);
+        }
+        prevGiftCount.current = result.totalGifts;
+        setData(result);
+      }
       setLoading(false);
     };
 
@@ -23,162 +39,187 @@ export default function LiveMonitor({ eventId }: { eventId: string }) {
 
   if (error)
     return (
-      <div className="text-red-500 p-4 border border-red-200 rounded">
+      <div className="rounded-2xl bg-warm-stone p-6 text-sm text-pewter">
         {error}
       </div>
     );
+
   if (loading && !data)
-    return <div className="animate-pulse h-64 bg-slate-100 rounded-xl" />;
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-28 animate-pulse rounded-2xl bg-warm-stone sm:h-32"
+            />
+          ))}
+        </div>
+        <div className="h-64 animate-pulse rounded-2xl bg-warm-stone lg:h-[420px]" />
+      </div>
+    );
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="relative overflow-hidden bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-800">
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full blur-3xl opacity-20" />
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
-            Total Collected
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        <motion.div
+          animate={pulse && !reduce ? { scale: [1, 1.01, 1] } : {}}
+          transition={{ duration: 0.4 }}
+          className="rounded-2xl bg-forest-depths p-6 sm:p-8"
+        >
+          <p className="text-[10px] font-medium uppercase tracking-widest text-snow-white/50">
+            Total collected
           </p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-emerald-400 text-3xl font-light">₹</span>
-            <span className="text-white text-5xl font-bold tracking-tight">
-              {data?.totalAmount.toLocaleString() ?? 0}
-            </span>
+          <div className="mt-2 flex items-baseline gap-1 sm:mt-3">
+            <span className="font-mono text-sm text-lime-pulse">₹</span>
+            <AnimatedNumber
+              value={data?.totalAmount ?? 0}
+              className="font-mono text-3xl font-light tracking-tight text-snow-white sm:text-4xl lg:text-5xl"
+            />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-center">
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">
-            Total Envelopes
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="show"
+          className="rounded-2xl bg-warm-stone p-6 sm:p-8"
+        >
+          <p className="text-[10px] font-medium uppercase tracking-widest text-pewter">
+            Total envelopes
           </p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-slate-900 text-5xl font-bold tracking-tight">
-              {data?.totalGifts ?? 0}
-            </span>
-            <span className="text-slate-400 text-sm font-medium">processed</span>
+          <div className="mt-2 flex items-baseline gap-2 sm:mt-3">
+            <AnimatedNumber
+              value={data?.totalGifts ?? 0}
+              className="font-mono text-3xl font-light tracking-tight text-forest-depths sm:text-4xl lg:text-5xl"
+            />
+            <span className="text-sm text-pewter">processed</span>
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[500px]">
-          <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              Live Feed
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+        {/* Live feed */}
+        <div className="flex flex-col overflow-hidden rounded-2xl bg-warm-stone lg:col-span-2 lg:max-h-[480px]">
+          <div className="flex items-center justify-between border-b border-frosted-glass p-4">
+            <h3 className="text-[10px] font-medium uppercase tracking-widest text-pewter">
+              Live feed
             </h3>
-            <div className="flex items-center gap-1.5">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-              </span>
-              <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">
-                Live
-              </span>
-            </div>
+            <span className="flex items-center gap-1.5 rounded-full bg-lime-pulse px-2 py-0.5 text-[10px] font-medium text-forest-depths">
+              {!reduce && (
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-forest-depths" />
+              )}
+              Live
+            </span>
           </div>
 
           <div className="flex-1 overflow-y-auto">
             {data?.recentGifts.length === 0 && (
-              <div className="p-8 text-center text-slate-400 text-sm italic">
-                No gifts collected yet.
+              <div className="p-8 text-center text-sm italic text-pewter">
+                Waiting for first envelope…
               </div>
             )}
-            {data?.recentGifts.map((gift) => (
-              <div
-                key={gift.id}
-                className="flex justify-between items-center p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors"
-              >
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    {gift.sender || "Anonymous"}
-                  </p>
-                  <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">
-                    {gift.collectorName}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-emerald-600">
-                    +₹{gift.amount?.toLocaleString() ?? 0}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">
-                    {new Date(gift.createdAt).toLocaleTimeString()}
-                  </p>
-                </div>
-              </div>
-            ))}
+            <AnimatePresence initial={false}>
+              {data?.recentGifts.map((gift, i) => (
+                <motion.div
+                  key={gift.id}
+                  initial={reduce ? false : { opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.03, duration: 0.3 }}
+                  className="flex items-center justify-between border-b border-frosted-glass/50 px-4 py-3 transition-colors hover:bg-snow-white/50"
+                >
+                  <div className="min-w-0 flex-1 pr-3">
+                    <p className="truncate text-sm font-medium text-forest-depths">
+                      {gift.sender || "Anonymous"}
+                    </p>
+                    <p className="mt-0.5 truncate text-[10px] uppercase tracking-wide text-pewter">
+                      {gift.collectorName}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="font-mono text-sm font-medium text-forest-depths">
+                      +₹{(gift.amount ?? 0).toLocaleString("en-IN")}
+                    </p>
+                    <p className="mt-0.5 font-mono text-[10px] text-pewter">
+                      {new Date(gift.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-slate-100 bg-slate-50">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              Bag Performance & Team Status
+        {/* Table */}
+        <div className="overflow-hidden rounded-2xl bg-warm-stone lg:col-span-3">
+          <div className="border-b border-frosted-glass p-4">
+            <h3 className="text-[10px] font-medium uppercase tracking-widest text-pewter">
+              Bag performance
             </h3>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[480px] border-collapse text-left">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Bag #
-                  </th>
-                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Collector
-                  </th>
-                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                    Collected
-                  </th>
+                <tr className="border-b border-frosted-glass">
+                  {["Bag #", "Collector", "Status", "Collected"].map((h, i) => (
+                    <th
+                      key={h}
+                      className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-pewter ${
+                        i === 3 ? "text-right" : ""
+                      }`}
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {data?.batchStats.map((batch) => (
-                  <tr
+              <tbody>
+                {data?.batchStats.map((batch, i) => (
+                  <motion.tr
                     key={batch.batchId}
-                    className="hover:bg-slate-50 transition-colors group"
+                    initial={reduce ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.04 }}
+                    className="border-b border-frosted-glass/50 transition-colors hover:bg-snow-white/40"
                   >
-                    <td className="py-4 px-4">
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-slate-100 text-slate-700 font-bold text-sm border border-slate-200">
+                    <td className="px-4 py-3.5">
+                      <span className="inline-flex rounded-full border border-forest-depths px-2 py-0.5 font-mono text-[10px] text-forest-depths">
                         #{batch.bagNumber}
                       </span>
                     </td>
-                    <td className="py-4 px-4">
-                      <p className="text-sm font-semibold text-slate-900">
+                    <td className="px-4 py-3.5">
+                      <p className="text-sm font-medium text-forest-depths">
                         {batch.collectorName}
                       </p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
-                        {batch.giftCount} items sealed
+                      <p className="mt-0.5 text-xs text-pewter">
+                        {batch.giftCount} items
                       </p>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="px-4 py-3.5">
                       {batch.isActive ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          Active
-                        </span>
+                        <span className="badge-lime text-[10px]">Active</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                          Idle
-                        </span>
+                        <span className="badge-outline text-[10px]">Idle</span>
                       )}
                     </td>
-                    <td className="py-4 px-4 text-right">
-                      <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                        ₹ {batch.totalAmount.toLocaleString()}
+                    <td className="px-4 py-3.5 text-right">
+                      <span className="font-mono text-sm font-medium text-forest-depths">
+                        ₹{batch.totalAmount.toLocaleString("en-IN")}
                       </span>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
           </div>
 
           {data?.batchStats.length === 0 && (
-            <div className="p-8 text-center text-slate-400 text-sm italic">
-              No bags have been opened yet.
+            <div className="p-8 text-center text-sm italic text-pewter">
+              No bags opened yet.
             </div>
           )}
         </div>

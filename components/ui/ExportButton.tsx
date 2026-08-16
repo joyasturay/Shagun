@@ -16,8 +16,8 @@ export default function ExportButton({ eventId }: { eventId: string }) {
   }
 
   return (
-    <button onClick={handleDownload} className="bg-green-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-green-700 transition">
-      📥 Download Excel
+    <button onClick={handleDownload} className="btn-inverted">
+      Download CSV →
     </button>
   )
 }

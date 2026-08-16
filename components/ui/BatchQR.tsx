@@ -2,6 +2,7 @@
 
 import { QRCodeSVG } from 'qrcode.react'
 import Link from 'next/link'
+
 export default function BatchQR({ 
   batchId, 
   bagNumber, 
@@ -15,8 +16,10 @@ export default function BatchQR({
   const collectionUrl = `${origin}/collect/${batchId}`
 
   return (
-    <div className="flex flex-col items-center p-6 bg-white rounded-lg">
-      <div className="bg-white p-4 border-4 border-black rounded-xl mb-4">
+    <div className="flex flex-col items-center bg-snow-white p-8">
+      <span className="code-pill mb-6">Bag #{bagNumber}</span>
+
+      <div className="mb-6 rounded-2xl border-[1.5px] border-forest-depths p-4">
         <QRCodeSVG 
           value={collectionUrl} 
           size={200}
@@ -25,27 +28,24 @@ export default function BatchQR({
         />
       </div>
       
-      <h3 className="text-2xl font-bold mb-1">BAG #{bagNumber}</h3>
-      <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">
+      <h3 className="text-[length:var(--text-subheading)] font-light text-forest-depths">
         {eventName}
-      </p>
+      </h3>
       
-      <p className="text-xs text-gray-400 mt-4 max-w-[200px] text-center break-all">
+      <p className="mt-2 max-w-[200px] break-all text-center font-seed-sans-mono text-[length:var(--text-label)] tracking-[0.015em] text-pewter">
         {batchId}
       </p>
       
       <button 
         onClick={() => window.print()} 
-        className="mt-6 text-sm text-blue-600 hover:underline print:hidden"
+        className="btn-text mt-6 print:hidden"
       >
-        🖨️ Print Label
+        Print label →
       </button>
-      <div className="w-full mt-6 pt-6 border-t border-gray-100 print:hidden">
-        <Link 
-          href={`/collect/${batchId}`}
-          className="flex items-center justify-center w-full bg-black text-white py-3 rounded-lg text-sm font-bold shadow-md hover:bg-gray-800 hover:scale-[1.02] transition-all"
-        >
-          Open Form on this Device ↗
+
+      <div className="mt-6 w-full border-t border-frosted-glass pt-6 print:hidden">
+        <Link href={`/collect/${batchId}`} className="btn-primary w-full">
+          Open on this device →
         </Link>
       </div>
     </div>

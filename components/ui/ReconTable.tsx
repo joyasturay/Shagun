@@ -20,19 +20,13 @@ export default function ReconTable({ gifts, eventId }: { gifts: Gift[], eventId:
     setOptimisticGifts(current =>
       current.map(g => g.id === giftId ? { ...g, status } : g)
     )
-
     startTransition(() => {
       verifyGift(giftId, status, eventId)
     })
   }
 
-  // Totals recompute live as the admin flags/verifies envelopes.
-  // Gross = Verified + Pending + Flagged
   const totals = useMemo(() => {
-    let gross = 0
-    let verified = 0
-    let pending = 0
-    let flagged = 0
+    let gross = 0, verified = 0, pending = 0, flagged = 0
     for (const g of optimisticGifts) {
       const amt = g.amount ?? 0
       gross += amt
@@ -43,7 +37,6 @@ export default function ReconTable({ gifts, eventId }: { gifts: Gift[], eventId:
     return { gross, verified, pending, flagged }
   }, [optimisticGifts])
 
-  // Per-collector breakdown
   const collectors = useMemo(() => {
     const map = new Map<string, { name: string; count: number; verified: number; pending: number; flagged: number }>()
     for (const g of optimisticGifts) {
@@ -63,123 +56,142 @@ export default function ReconTable({ gifts, eventId }: { gifts: Gift[], eventId:
 
   return (
     <div className="space-y-6">
-      {/* Summary stat cards — Gross = Verified + Pending + Flagged */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Gross Collected</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{inr(totals.gross)}</p>
-          <p className="text-[11px] text-gray-400 mt-1">Everything scanned</p>
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="rounded-2xl bg-warm-stone p-6">
+          <p className="section-label">Gross collected</p>
+          <p className="mt-2 font-seed-sans-mono text-[length:var(--text-subheading)] font-medium tracking-[0.015em] text-forest-depths">
+            {inr(totals.gross)}
+          </p>
+          <p className="mt-1 text-[length:var(--text-label)] text-pewter">Everything scanned</p>
         </div>
-        <div className="bg-emerald-600 rounded-xl p-5 shadow-sm">
-          <p className="text-xs font-semibold text-emerald-100 uppercase tracking-wider">✅ Verified</p>
-          <p className="text-2xl font-bold text-white mt-1">{inr(totals.verified)}</p>
-          <p className="text-[11px] text-emerald-100 mt-1">Cash confirmed</p>
+        <div className="rounded-2xl bg-forest-depths p-6">
+          <p className="section-label text-snow-white/60">Verified</p>
+          <p className="mt-2 font-seed-sans-mono text-[length:var(--text-subheading)] font-medium tracking-[0.015em] text-snow-white">
+            {inr(totals.verified)}
+          </p>
+          <p className="mt-1 text-[length:var(--text-label)] text-snow-white/50">Cash confirmed</p>
         </div>
-        <div className="bg-white border border-amber-200 rounded-xl p-5 shadow-sm">
-          <p className="text-xs font-semibold text-amber-500 uppercase tracking-wider">⏳ Pending</p>
-          <p className="text-2xl font-bold text-amber-600 mt-1">{inr(totals.pending)}</p>
-          <p className="text-[11px] text-amber-500 mt-1">Not yet checked</p>
+        <div className="rounded-2xl bg-warm-stone p-6">
+          <p className="section-label">Pending</p>
+          <p className="mt-2 font-seed-sans-mono text-[length:var(--text-subheading)] font-medium tracking-[0.015em] text-olive-gold">
+            {inr(totals.pending)}
+          </p>
+          <p className="mt-1 text-[length:var(--text-label)] text-pewter">Not yet checked</p>
         </div>
-        <div className="bg-white border border-red-200 rounded-xl p-5 shadow-sm">
-          <p className="text-xs font-semibold text-red-400 uppercase tracking-wider">🚩 Flagged</p>
-          <p className="text-2xl font-bold text-red-600 mt-1">{inr(totals.flagged)}</p>
-          <p className="text-[11px] text-red-400 mt-1">Discrepancy</p>
+        <div className="rounded-2xl bg-warm-stone p-6">
+          <p className="section-label">Flagged</p>
+          <p className="mt-2 font-seed-sans-mono text-[length:var(--text-subheading)] font-medium tracking-[0.015em] text-sage-moss">
+            {inr(totals.flagged)}
+          </p>
+          <p className="mt-1 text-[length:var(--text-label)] text-pewter">Discrepancy</p>
         </div>
       </div>
 
-      {/* Per-collector summary */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-3 border-b bg-gray-50">
-          <h3 className="text-sm font-bold text-gray-900">Collections by Person</h3>
-          <p className="text-xs text-gray-500 mt-0.5">Who collected what — flagged amounts excluded from net.</p>
+      <div className="overflow-hidden rounded-2xl bg-warm-stone">
+        <div className="border-b border-frosted-glass px-6 py-4">
+          <h3 className="text-[length:var(--text-caption)] font-medium text-forest-depths">
+            Collections by person
+          </h3>
+          <p className="mt-0.5 text-[length:var(--text-label)] text-pewter">
+            Who collected what — flagged amounts excluded from net.
+          </p>
         </div>
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50 border-b text-xs text-gray-500 uppercase tracking-wider">
-            <tr>
-              <th className="px-6 py-2.5">Collector</th>
-              <th className="px-6 py-2.5 text-right">Envelopes</th>
-              <th className="px-6 py-2.5 text-right">✅ Verified</th>
-              <th className="px-6 py-2.5 text-right">⏳ Pending</th>
-              <th className="px-6 py-2.5 text-right">🚩 Flagged</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {collectors.map((c) => (
-              <tr key={c.name}>
-                <td className="px-6 py-3 font-medium text-gray-900 flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
-                    {c.name.charAt(0).toUpperCase()}
-                  </span>
-                  {c.name}
-                </td>
-                <td className="px-6 py-3 text-right text-gray-600">{c.count}</td>
-                <td className="px-6 py-3 text-right font-bold text-emerald-600">{inr(c.verified)}</td>
-                <td className="px-6 py-3 text-right text-amber-600">{c.pending > 0 ? inr(c.pending) : "—"}</td>
-                <td className="px-6 py-3 text-right text-red-500">{c.flagged > 0 ? inr(c.flagged) : "—"}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[length:var(--text-caption)]">
+            <thead>
+              <tr className="border-b border-frosted-glass">
+                <th className="px-6 py-3 section-label">Collector</th>
+                <th className="px-6 py-3 text-right section-label">Envelopes</th>
+                <th className="px-6 py-3 text-right section-label">Verified</th>
+                <th className="px-6 py-3 text-right section-label">Pending</th>
+                <th className="px-6 py-3 text-right section-label">Flagged</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {collectors.map((c) => (
+                <tr key={c.name} className="border-b border-frosted-glass/50">
+                  <td className="px-6 py-3 font-medium text-forest-depths">{c.name}</td>
+                  <td className="px-6 py-3 text-right text-pewter">{c.count}</td>
+                  <td className="px-6 py-3 text-right font-seed-sans-mono font-medium text-forest-depths">{inr(c.verified)}</td>
+                  <td className="px-6 py-3 text-right font-seed-sans-mono text-olive-gold">{c.pending > 0 ? inr(c.pending) : "—"}</td>
+                  <td className="px-6 py-3 text-right font-seed-sans-mono text-sage-moss">{c.flagged > 0 ? inr(c.flagged) : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Envelope-level table */}
-      <div className="overflow-x-auto bg-white border rounded-xl shadow-sm">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-6 py-3">Photo</th>
-              <th className="px-6 py-3">Sender</th>
-              <th className="px-6 py-3">Collected By</th>
-              <th className="px-6 py-3">Amount</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3 text-right">Action</th>
+      <div className="overflow-x-auto rounded-2xl bg-warm-stone">
+        <table className="w-full text-left text-[length:var(--text-caption)]">
+          <thead>
+            <tr className="border-b border-frosted-glass">
+              <th className="px-6 py-3 section-label">Photo</th>
+              <th className="px-6 py-3 section-label">Sender</th>
+              <th className="px-6 py-3 section-label">Collected by</th>
+              <th className="px-6 py-3 section-label">Amount</th>
+              <th className="px-6 py-3 section-label">Status</th>
+              <th className="px-6 py-3 text-right section-label">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody>
             {optimisticGifts.map((g) => (
-              <tr key={g.id} className={g.status === 'PROCESSED' ? 'bg-green-50' : g.status === 'FLAGGED' ? 'bg-red-50' : ''}>
-
+              <tr
+                key={g.id}
+                className={
+                  g.status === 'PROCESSED'
+                    ? 'bg-snow-white/60'
+                    : g.status === 'FLAGGED'
+                    ? 'bg-frosted-glass/20'
+                    : ''
+                }
+              >
                 <td className="px-6 py-4">
                   {g.imageUrl ? (
-                    <a href={g.imageUrl} target="_blank" rel="noopener noreferrer" className="block">
+                    <a href={g.imageUrl} target="_blank" rel="noopener noreferrer">
                       <img
                         src={g.imageUrl}
                         alt="Envelope"
-                        className="w-12 h-12 object-cover rounded border border-gray-300 shadow-sm hover:scale-110 transition cursor-pointer"
+                        className="h-12 w-12 rounded-lg object-cover"
                       />
                     </a>
                   ) : (
-                    <div className="w-12 h-12 bg-gray-100 rounded border border-gray-200 border-dashed flex items-center justify-center text-[10px] text-gray-400 text-center">
-                      No<br/>Photo
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-dashed border-frosted-glass text-[10px] text-pewter">
+                      No photo
                     </div>
                   )}
                 </td>
-
-                <td className="px-6 py-4 font-medium">{g.sender || 'Anonymous'}</td>
-                <td className="px-6 py-4 text-gray-600">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                      {(g.collectedBy || "U").charAt(0).toUpperCase()}
-                    </span>
-                    {g.collectedBy || "Unknown"}
-                  </span>
-                </td>
-                <td className={`px-6 py-4 font-bold ${g.status === 'FLAGGED' ? 'line-through text-gray-400' : ''}`}>
-                  {g.amount ? `₹${g.amount}` : <span className="text-gray-400 italic">Empty</span>}
+                <td className="px-6 py-4 font-medium text-forest-depths">{g.sender || 'Anonymous'}</td>
+                <td className="px-6 py-4 text-pewter">{g.collectedBy || "Unknown"}</td>
+                <td className={`px-6 py-4 font-seed-sans-mono font-medium ${g.status === 'FLAGGED' ? 'text-pewter line-through' : 'text-forest-depths'}`}>
+                  {g.amount ? inr(g.amount) : <span className="italic text-pewter">Empty</span>}
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded text-xs font-bold ${
-                    g.status === 'UNPROCESSED' ? 'bg-yellow-100 text-yellow-800' :
-                    g.status === 'PROCESSED' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={
+                    g.status === 'UNPROCESSED' ? 'badge-lime text-[10px]' :
+                    g.status === 'PROCESSED' ? 'badge-outline text-[10px]' :
+                    'badge-outline text-[10px] text-sage-moss border-sage-moss'
+                  }>
                     {g.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right space-x-2">
+                <td className="space-x-2 px-6 py-4 text-right">
                   {g.status === 'UNPROCESSED' && (
                     <>
-                      <button onClick={() => handleStatus(g.id, 'PROCESSED')} className="text-xl hover:scale-110 transition" title="Verify Cash Matches">✅</button>
-                      <button onClick={() => handleStatus(g.id, 'FLAGGED')} className="text-xl hover:scale-110 transition" title="Flag Discrepancy">🚩</button>
+                      <button
+                        onClick={() => handleStatus(g.id, 'PROCESSED')}
+                        disabled={isPending}
+                        className="btn-inverted px-3 py-1.5 text-[length:var(--text-label)]"
+                      >
+                        Verify
+                      </button>
+                      <button
+                        onClick={() => handleStatus(g.id, 'FLAGGED')}
+                        disabled={isPending}
+                        className="rounded-full border-[1.5px] border-sage-moss px-3 py-1.5 text-[length:var(--text-label)] text-sage-moss"
+                      >
+                        Flag
+                      </button>
                     </>
                   )}
                 </td>

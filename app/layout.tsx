@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Poppins, Inter } from "next/font/google";
+import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-});
-
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["300", "400", "500"],
   variable: "--font-inter",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400"],
+  variable: "--font-ibm-plex-mono",
 });
 
 export const metadata: Metadata = {
@@ -64,17 +65,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`
-          ${poppins.variable}
-          ${inter.variable}
-          antialiased
-        `}
+        className={`${inter.variable} ${ibmPlexMono.variable} antialiased`}
       >
         {children}
 
         <div className="hidden md:block">
           <Toaster
-            richColors
             position="top-right"
             offset={24}
             closeButton
@@ -85,7 +81,6 @@ export default function RootLayout({
 
         <div className="block md:hidden">
           <Toaster
-            richColors
             position="top-center"
             offset={16}
             closeButton

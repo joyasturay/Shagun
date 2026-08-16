@@ -1,9 +1,9 @@
 import prisma from "@/db/lib/prisma"
 import {auth} from "app/lib/auth"
 import { notFound, redirect } from "next/navigation"
-import Link from "next/link"
 import ReconTable from "@/components/ui/ReconTable"
 import ExportButton from "@/components/ui/ExportButton"
+import { DashboardShell } from "@/components/ui/dashboard-shell"
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -47,7 +47,6 @@ export default async function ReconcilePage({ params }: Props) {
     status: g.status,
     imageUrl: g.imageUrl,
     bagNumber: g.batch.bagNumber,
-    // Per-envelope collector; fall back to the bag owner for gifts saved before this field existed
     collectedBy:
       g.collectedBy?.name ||
       g.collectedBy?.email ||
@@ -57,36 +56,22 @@ export default async function ReconcilePage({ params }: Props) {
   }))
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8">
-      
-      <div>
-        <Link 
-          href={`/dashboard/event/${id}`} 
-          className="text-sm font-medium text-gray-500 hover:text-black mb-4 inline-block transition"
-        >
-          ← Back to {event.name}
-        </Link>
-        
-        <div className="flex justify-between items-end border-b pb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Audit & Reconciliation</h1>
-            <p className="text-gray-500 mt-1">Verify physical cash and track missing envelopes.</p>
-          </div>
-          
-          {/* Moved the Export Button here! */}
-          <ExportButton eventId={id} />
-        </div>
-      </div>
-
-      {/* RECONCILIATION TABLE */}
+    <DashboardShell
+      title="Audit & Reconciliation"
+      subtitle="Verify physical cash and track missing envelopes."
+      backHref={`/dashboard/event/${id}`}
+      backLabel={`Back to ${event.name}`}
+      action={<ExportButton eventId={id} />}
+    >
       {gifts.length > 0 ? (
         <ReconTable gifts={gifts} eventId={id} />
       ) : (
-        <div className="p-16 text-center text-gray-400 italic bg-gray-50 border rounded-xl">
-          No envelopes collected yet.
+        <div className="rounded-2xl bg-warm-stone py-24 text-center">
+          <p className="text-[length:var(--text-caption)] italic text-pewter">
+            No envelopes collected yet.
+          </p>
         </div>
       )}
-
-    </div>
+    </DashboardShell>
   )
 }

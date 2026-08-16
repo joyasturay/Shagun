@@ -1,196 +1,303 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/ui/brand-logo";
+import { BrandNav } from "@/components/ui/brand-nav";
 
-export default function Home() {
+function HeroMockup() {
+  const gifts = [
+    { sender: "Sharma Family", amount: 5001, time: "11:42 PM", status: "verified" as const },
+    { sender: "Gupta Uncle", amount: 2100, time: "11:38 PM", status: "verified" as const },
+    { sender: "Mehta Aunty", amount: 1100, time: "11:35 PM", status: "pending" as const },
+    { sender: "Anonymous", amount: 501, time: "11:31 PM", status: "new" as const },
+    { sender: "Patel Family", amount: 2500, time: "11:28 PM", status: "verified" as const },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#09090b] text-white font-sans antialiased selection:bg-amber-400/30">
-
-      {/* Nav */}
-      <nav className="fixed top-0 inset-x-0 z-50 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-amber-400 flex items-center justify-center shadow-lg shadow-amber-400/30">
-              <span className="text-[#09090b] font-black text-sm leading-none">S</span>
-            </div>
-            <span className="text-base font-semibold tracking-tight text-white">
-              Shagun<span className="text-amber-400">.ai</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href="/login" className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
-              Log in
-            </Link>
-            <Link href="/dashboard" className="px-4 py-2 text-sm font-semibold bg-amber-400 text-[#09090b] rounded-lg hover:bg-amber-300 transition-colors shadow-lg shadow-amber-400/20">
-              Get started
-            </Link>
-          </div>
+    <div className="overflow-hidden rounded-[28px] bg-forest-depths">
+      {/* Mock browser chrome */}
+      <div className="flex items-center gap-2 border-b border-snow-white/10 px-5 py-3">
+        <div className="flex gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-snow-white/20" />
+          <span className="h-2.5 w-2.5 rounded-full bg-snow-white/20" />
+          <span className="h-2.5 w-2.5 rounded-full bg-snow-white/20" />
         </div>
-      </nav>
+        <span className="mx-auto font-mono text-[11px] text-snow-white/40">
+          shagun.ai/dashboard
+        </span>
+      </div>
 
-      {/* Hero */}
-      <section className="pt-40 pb-28 px-6 relative overflow-hidden">
-        {/* Glow blobs */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-amber-500/8 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute top-40 left-1/4 w-[300px] h-[300px] bg-rose-600/6 rounded-full blur-[80px] pointer-events-none" />
-
-        <div className="max-w-4xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/20 bg-amber-400/8 text-amber-300 text-xs font-medium mb-10 tracking-wide">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-400" />
-            </span>
-            Built for Indian weddings
+      <div className="p-5 sm:p-6">
+        {/* Event header */}
+        <div className="mb-5 flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-widest text-snow-white/50">
+              Live event
+            </p>
+            <p className="mt-1 text-lg font-light text-snow-white">
+              Sharma–Verma Wedding
+            </p>
           </div>
-
-          <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.95] mb-8">
-            <span className="text-white">Every rupee.</span>
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400">
-              Every guest.
-            </span>
-            <br />
-            <span className="text-white">Accounted for.</span>
-          </h1>
-
-          <p className="text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed mb-12">
-            Replace the chaotic notebook and 3 AM Excel sheets. Shagun.ai lets your family collect, scan, and reconcile every shagun envelope — in real-time.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/dashboard" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-amber-400 text-[#09090b] font-bold rounded-xl hover:bg-amber-300 transition-all shadow-2xl shadow-amber-400/25 text-base">
-              Create your event
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-            <Link href="/login" className="inline-flex items-center justify-center px-7 py-3.5 border border-white/10 text-zinc-300 font-medium rounded-xl hover:bg-white/5 hover:text-white transition-all text-base">
-              Sign in to dashboard
-            </Link>
-          </div>
+          <span className="rounded-full bg-lime-pulse px-2.5 py-1 text-[11px] font-medium text-forest-depths">
+            ● Live
+          </span>
         </div>
 
-        {/* Stats */}
-        <div className="max-w-2xl mx-auto mt-20 grid grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5">
+        {/* Stats row */}
+        <div className="mb-5 grid grid-cols-3 gap-3">
           {[
-            { value: "10,000+", label: "Envelopes scanned" },
-            { value: "< 3s", label: "AI reads per envelope" },
-            { value: "100%", label: "Audit accuracy" },
+            { label: "Collected", value: "₹1.2L" },
+            { label: "Envelopes", value: "847" },
+            { label: "Bags open", value: "3" },
           ].map((s) => (
-            <div key={s.label} className="bg-[#09090b] py-6 text-center">
-              <p className="text-2xl font-black text-amber-400 tabular-nums">{s.value}</p>
-              <p className="text-xs text-zinc-500 mt-1 tracking-wide">{s.label}</p>
+            <div
+              key={s.label}
+              className="rounded-2xl border border-snow-white/10 px-3 py-3"
+            >
+              <p className="text-[10px] uppercase tracking-wide text-snow-white/50">
+                {s.label}
+              </p>
+              <p className="mt-1 font-mono text-base font-medium text-snow-white">
+                {s.value}
+              </p>
             </div>
           ))}
         </div>
-      </section>
 
-      {/* Bento features */}
-      <section className="max-w-6xl mx-auto px-6 pb-28">
-        <div className="text-center mb-14">
-          <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">How it works</p>
-          <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">Three steps.<br className="hidden md:block" /> Zero chaos.</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Card 1 — tall */}
-          <div className="md:row-span-2 bg-[#111113] border border-white/6 rounded-2xl p-7 flex flex-col justify-between min-h-[280px] md:min-h-[400px] group hover:border-amber-400/20 transition-colors">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center mb-6 group-hover:bg-amber-400/15 transition-colors">
-                <svg className="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-                </svg>
+        {/* Gift feed */}
+        <div className="rounded-2xl border border-snow-white/10 bg-snow-white/5">
+          <div className="border-b border-snow-white/10 px-4 py-2.5">
+            <p className="text-[11px] font-medium uppercase tracking-widest text-snow-white/50">
+              Latest envelopes · Batch #12
+            </p>
+          </div>
+          <div className="divide-y divide-snow-white/10">
+            {gifts.map((g) => (
+              <div key={g.sender} className="flex items-center justify-between px-4 py-3">
+                <div>
+                  <p className="text-sm text-snow-white">{g.sender}</p>
+                  <p className="mt-0.5 font-mono text-[11px] text-snow-white/40">
+                    {g.time}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-sm font-medium text-snow-white">
+                    ₹{g.amount.toLocaleString("en-IN")}
+                  </span>
+                  {g.status === "new" && (
+                    <span className="rounded-full bg-lime-pulse px-2 py-0.5 text-[10px] font-medium text-forest-depths">
+                      New
+                    </span>
+                  )}
+                  {g.status === "pending" && (
+                    <span className="rounded-full border border-snow-white/30 px-2 py-0.5 text-[10px] text-snow-white/70">
+                      Pending
+                    </span>
+                  )}
+                  {g.status === "verified" && (
+                    <span className="text-[10px] text-eucalyptus">✓</span>
+                  )}
+                </div>
               </div>
-              <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Step 01</span>
-              <h3 className="text-xl font-bold text-white mt-2 mb-3">Snap the envelope</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">
-                Hand your collector a link. They open it on any phone, snap a photo of each envelope, and it's instantly stored. No app download, no login needed for them.
-              </p>
-            </div>
-            <div className="mt-8 h-24 rounded-xl bg-gradient-to-br from-amber-400/10 to-orange-600/5 border border-amber-400/10 flex items-center justify-center">
-              <span className="text-4xl">📸</span>
-            </div>
-          </div>
-
-          {/* Card 2 */}
-          <div className="md:col-span-2 bg-[#111113] border border-white/6 rounded-2xl p-7 group hover:border-violet-400/20 transition-colors">
-            <div className="w-12 h-12 rounded-xl bg-violet-400/10 border border-violet-400/20 flex items-center justify-center mb-6 group-hover:bg-violet-400/15 transition-colors">
-              <svg className="w-6 h-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-              </svg>
-            </div>
-            <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Step 02</span>
-            <h3 className="text-xl font-bold text-white mt-2 mb-2">AI reads the handwriting</h3>
-            <p className="text-zinc-400 text-sm leading-relaxed max-w-md">
-              Gemini Vision extracts the sender name and amount from even the messiest handwriting in under 3 seconds. Edit anything it misses with one tap.
-            </p>
-          </div>
-
-          {/* Card 3 */}
-          <div className="bg-[#111113] border border-white/6 rounded-2xl p-7 group hover:border-emerald-400/20 transition-colors">
-            <div className="w-12 h-12 rounded-xl bg-emerald-400/10 border border-emerald-400/20 flex items-center justify-center mb-6 group-hover:bg-emerald-400/15 transition-colors">
-              <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-              </svg>
-            </div>
-            <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Step 03</span>
-            <h3 className="text-xl font-bold text-white mt-2 mb-2">Audit in the morning</h3>
-            <p className="text-zinc-400 text-sm leading-relaxed">
-              AI flags duplicates, typos, and missing entries. Chat with it conversationally to resolve issues.
-            </p>
-          </div>
-
-          {/* Card 4 — wide */}
-          <div className="bg-[#111113] border border-white/6 rounded-2xl p-7 group hover:border-rose-400/20 transition-colors">
-            <div className="w-12 h-12 rounded-xl bg-rose-400/10 border border-rose-400/20 flex items-center justify-center mb-6 group-hover:bg-rose-400/15 transition-colors">
-              <svg className="w-6 h-6 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-              </svg>
-            </div>
-            <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Bonus</span>
-            <h3 className="text-xl font-bold text-white mt-2 mb-2">Export & reconcile</h3>
-            <p className="text-zinc-400 text-sm leading-relaxed">
-              Hand the family accountant a perfect CSV. Every bag, every rupee, every guest — fully traceable.
-            </p>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  );
+}
 
-      {/* CTA */}
-      <section className="max-w-6xl mx-auto px-6 pb-28">
-        <div className="relative rounded-3xl overflow-hidden border border-white/8 bg-gradient-to-br from-[#1a1305] via-[#111113] to-[#09090b] p-14 md:p-20 text-center">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(251,191,36,0.12)_0%,_transparent_60%)] pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(251,146,60,0.06)_0%,_transparent_60%)] pointer-events-none" />
+const steps = [
+  {
+    step: "01",
+    title: "Snap the envelope",
+    body: "Collectors open a link on any phone, photograph each envelope, and it's instantly stored with a permanent visual record.",
+  },
+  {
+    step: "02",
+    title: "AI reads the handwriting",
+    body: "Gemini Vision extracts sender and amount from messy handwriting in under 3 seconds. Edit anything it misses.",
+  },
+  {
+    step: "03",
+    title: "Reconcile in the morning",
+    body: "AI flags duplicates and gaps. Chat with the audit engine to resolve issues. Export a perfect CSV for the family accountant.",
+  },
+];
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-snow-white text-forest-depths">
+      <BrandNav />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        {/* Subtle botanical line art */}
+        <svg
+          className="pointer-events-none absolute -right-32 top-20 hidden h-[500px] w-[500px] opacity-[0.07] lg:block"
+          viewBox="0 0 400 400"
+          fill="none"
+          aria-hidden
+        >
+          <path
+            d="M200 380 C200 280 120 240 80 160 C40 80 120 20 200 60 C280 20 360 80 320 160 C280 240 200 280 200 380Z"
+            stroke="#1c3a13"
+            strokeWidth="1"
+          />
+          <path
+            d="M200 60 V200 M200 200 C160 220 120 200 100 160 M200 200 C240 220 280 200 300 160"
+            stroke="#1c3a13"
+            strokeWidth="1"
+          />
+        </svg>
+
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-16 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pb-28 lg:pt-24">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-frosted-glass bg-warm-stone px-3 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-lime-pulse" />
+              <span className="text-xs text-pewter">
+                Built for Indian weddings
+              </span>
+            </div>
+
+            <h1 className="text-[clamp(2.5rem,5vw,3.75rem)] font-light leading-[1.08] tracking-[-0.02em] text-forest-depths">
+              Every rupee.
+              <br />
+              Every guest.
+              <br />
+              Accounted for.
+            </h1>
+
+            <p className="mt-6 max-w-md text-base leading-relaxed text-pewter">
+              Replace the chaotic notebook and 3 AM Excel sheets. Collect, scan,
+              and reconcile every shagun envelope — with a photo audit trail your
+              whole family can trust.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/signup" className="btn-primary">
+                Create your event
+              </Link>
+              <Link href="/login" className="btn-inverted">
+                Sign in
+              </Link>
+            </div>
+
+            <div className="mt-10 flex flex-wrap gap-6 border-t border-frosted-glass pt-8">
+              {[
+                { n: "10,000+", l: "Envelopes scanned" },
+                { n: "< 3s", l: "Per AI read" },
+                { n: "100%", l: "Audit trail" },
+              ].map((s) => (
+                <div key={s.l}>
+                  <p className="font-mono text-xl font-medium text-forest-depths">
+                    {s.n}
+                  </p>
+                  <p className="mt-0.5 text-xs text-pewter">{s.l}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="relative">
-            <p className="text-xs font-bold uppercase tracking-widest text-amber-400/60 mb-4">Get started free</p>
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-              The whole family<br />deserves better than Excel.
-            </h2>
-            <p className="text-zinc-400 max-w-lg mx-auto mb-10 leading-relaxed">
-              Set up your event in 2 minutes. Distribute collector links. Sit back while shagun data flows in — all night, all wedding.
-            </p>
-            <Link href="/dashboard" className="inline-flex items-center gap-2 px-8 py-4 bg-amber-400 text-[#09090b] font-black rounded-xl hover:bg-amber-300 transition-all shadow-2xl shadow-amber-400/20 text-base">
-              Create your event — it's free
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
+            <HeroMockup />
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-8 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-zinc-600">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-md bg-amber-400 flex items-center justify-center">
-              <span className="text-[#09090b] font-black text-[10px]">S</span>
+      {/* How it works */}
+      <section id="how" className="border-t border-frosted-glass bg-warm-stone py-24">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <p className="text-xs font-medium uppercase tracking-widest text-pewter">
+            How it works
+          </p>
+          <h2 className="mt-3 max-w-md text-3xl font-light tracking-tight text-forest-depths md:text-4xl">
+            Three steps. Zero chaos.
+          </h2>
+
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {steps.map((s) => (
+              <article
+                key={s.step}
+                className="rounded-2xl bg-snow-white p-8"
+              >
+                <span className="font-mono text-xs tracking-widest text-pewter">
+                  {s.step}
+                </span>
+                <h3 className="mt-4 text-xl font-light text-forest-depths">
+                  {s.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-pewter">
+                  {s.body}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features dark band */}
+      <section id="features" className="bg-forest-depths py-24">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-widest text-snow-white/50">
+                Why Shagun.ai
+              </p>
+              <h2 className="mt-3 text-3xl font-light tracking-tight text-snow-white md:text-4xl">
+                The whole family deserves better than Excel.
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-snow-white/65">
+                Set up in 2 minutes. Share collector links. Watch envelopes flow
+                in all night — then reconcile with AI before breakfast.
+              </p>
+              <Link
+                href="/signup"
+                className="mt-8 inline-flex rounded-full bg-snow-white px-6 py-3.5 text-sm font-medium text-forest-depths transition-colors hover:bg-warm-stone"
+              >
+                Get started free →
+              </Link>
             </div>
-            <span>© {new Date().getFullYear()} Shagun.ai</span>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { t: "Photo audit trail", d: "Every envelope photographed and timestamped" },
+                { t: "Batch sealing", d: "Physical bags mapped to digital batches" },
+                { t: "AI reconciliation", d: "Duplicates and gaps caught automatically" },
+                { t: "CSV export", d: "Accountant-ready in one click" },
+              ].map((f) => (
+                <div
+                  key={f.t}
+                  className="rounded-2xl border border-snow-white/15 p-5"
+                >
+                  <p className="text-sm font-medium text-snow-white">{f.t}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-snow-white/55">
+                    {f.d}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-6">
-            <span className="hover:text-zinc-300 cursor-pointer transition-colors">Privacy</span>
-            <span className="hover:text-zinc-300 cursor-pointer transition-colors">Terms</span>
-          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-24 text-center">
+        <div className="mx-auto max-w-xl px-6">
+          <h2 className="text-3xl font-light tracking-tight text-forest-depths md:text-4xl">
+            Ditch the diary. Digitize the Shagun.
+          </h2>
+          <p className="mt-4 text-base text-pewter">
+            Collector snaps. Admin reconciles. Family sleeps easy.
+          </p>
+          <Link href="/signup" className="btn-primary mt-8">
+            Create your event — it&apos;s free
+          </Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-frosted-glass py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-xs text-pewter md:flex-row lg:px-8">
+          <BrandLogo href="/" />
+          <span>© {new Date().getFullYear()} Shagun.ai</span>
         </div>
       </footer>
     </div>

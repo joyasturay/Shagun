@@ -2,16 +2,17 @@
 
 import { logout } from "@/app/actions/logout";
 import { useFormStatus } from "react-dom";
+
 function SubmitButton() {
   const { pending } = useFormStatus();
-  
+
   return (
-    <button 
-      type="submit" 
+    <button
+      type="submit"
       disabled={pending}
-      className="text-sm font-medium text-gray-600 hover:text-rose-900 disabled:text-gray-400 transition"
+      className="btn-inverted px-5 py-2.5 text-[length:var(--text-caption)] disabled:opacity-50"
     >
-      {pending ? "Logging out..." : "Log out"}
+      {pending ? "Logging out…" : "Log out"}
     </button>
   );
 }
