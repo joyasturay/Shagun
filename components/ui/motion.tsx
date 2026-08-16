@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
 
 export const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -73,35 +72,21 @@ export function AnimatedNumber({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  const prev = useRef(value);
-  const [display, setDisplay] = useState(value);
+  const formatted = `${prefix}${value.toLocaleString("en-IN")}`;
 
-  useEffect(() => {
-    if (reduce || prev.current === value) {
-      setDisplay(value);
-      prev.current = value;
-      return;
-    }
-    const start = prev.current;
-    const diff = value - start;
-    const duration = 500;
-    const startTime = performance.now();
-
-    const tick = (now: number) => {
-      const t = Math.min((now - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setDisplay(Math.round(start + diff * eased));
-      if (t < 1) requestAnimationFrame(tick);
-      else prev.current = value;
-    };
-
-    requestAnimationFrame(tick);
-  }, [value, reduce]);
+  if (reduce) {
+    return <span className={className}>{formatted}</span>;
+  }
 
   return (
-    <span className={className}>
-      {prefix}
-      {display.toLocaleString("en-IN")}
-    </span>
+    <motion.span
+      key={value}
+      initial={{ opacity: 0.7, y: 3 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {formatted}
+    </motion.span>
   );
 }

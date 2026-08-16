@@ -6,7 +6,7 @@ import InviteMemberForm from "./InviteMemberForm";
 import BatchList from "./BatchList";
 import LiveMonitor from "./LiveMonitor";
 import ConversationalAudit from "./ConversationalAudit";
-import { FadeIn, Stagger, fadeUp, stagger } from "./motion";
+import { FadeIn, Stagger, fadeUp } from "./motion";
 
 type Batch = {
   id: string;
@@ -98,6 +98,35 @@ export function EventDashboardAdmin({
 
   return (
     <div className="space-y-8 sm:space-y-10 lg:space-y-12">
+      {/* Recon entry — primary post-event workflow */}
+      <FadeIn>
+        <Link
+          href={`/dashboard/event/${eventId}/reconcile`}
+          className="group flex flex-col gap-4 rounded-2xl bg-forest-depths p-6 transition-opacity hover:opacity-95 sm:flex-row sm:items-center sm:justify-between sm:p-8"
+        >
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-widest text-snow-white/50">
+              Post-event
+            </p>
+            <h2 className="mt-1 text-xl font-light text-snow-white sm:text-2xl">
+              Audit & reconciliation
+            </h2>
+            <p className="mt-2 max-w-lg text-sm leading-relaxed text-snow-white/65">
+              Verify cash against photos, flag discrepancies, and download a
+              CSV for the family accountant.
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap items-center gap-3">
+            <span className="rounded-full bg-lime-pulse px-3 py-1.5 text-xs font-medium text-forest-depths">
+              {stats.envelopes} envelope{stats.envelopes === 1 ? "" : "s"}
+            </span>
+            <span className="rounded-full border border-snow-white/30 px-5 py-2.5 text-sm text-snow-white transition-colors group-hover:bg-snow-white/10">
+              Open recon page →
+            </span>
+          </div>
+        </Link>
+      </FadeIn>
+
       {/* Quick stats */}
       <Stagger className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
         <StatPill label="Ceremonies" value={stats.ceremonies} />

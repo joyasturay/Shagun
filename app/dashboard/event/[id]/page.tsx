@@ -1,6 +1,7 @@
 import prisma from "@/db/lib/prisma";
 import { auth } from "app/lib/auth";
 import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
 import CollectorBagList from "@/components/ui/CollectorBagList";
 import { DashboardShell } from "@/components/ui/dashboard-shell";
 import { EventDashboardAdmin } from "@/components/ui/event-dashboard";
@@ -96,6 +97,14 @@ export default async function getEvent({ params }: Props) {
           <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-forest-depths" />
           Active
         </span>
+      }
+      action={
+        <Link
+          href={`/dashboard/event/${event.id}/reconcile`}
+          className="btn-primary whitespace-nowrap"
+        >
+          Audit & Recon →
+        </Link>
       }
     >
       <EventDashboardAdmin

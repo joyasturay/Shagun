@@ -21,7 +21,6 @@ export interface GlassDockProps extends React.HTMLAttributes<HTMLDivElement> {
 // Attempt to register MorphSVGPlugin if available. 
 if (typeof window !== "undefined") {
     try {
-        // @ts-ignore
         import("gsap/MorphSVGPlugin").then((plugin) => {
             gsap.registerPlugin(plugin.MorphSVGPlugin);
         }).catch(e => {
